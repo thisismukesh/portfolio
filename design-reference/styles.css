@@ -1,0 +1,607 @@
+/* styles.css — portfolio */
+
+/* ── reset + tokens ───────────────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body, h1, h2, h3, p, ul, figure { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+:root {
+  /* dark base — deep cool charcoal, never pure black */
+  --bg:        oklch(0.165 0.008 250);
+  --bg-2:      oklch(0.205 0.008 250);
+  --bg-panel:  oklch(0.215 0.008 250);
+  --bg-card:   oklch(0.235 0.008 250);
+
+  /* off-white, slightly warm */
+  --fg:        oklch(0.945 0.005 90);
+  --fg-2:      oklch(0.78 0.008 90);
+  --fg-3:      oklch(0.58 0.008 90);
+  --fg-4:      oklch(0.42 0.008 90);
+
+  --hair:      oklch(0.32 0.008 250);
+  --hair-2:    oklch(0.27 0.008 250);
+
+  --accent:    oklch(0.78 0.10 65); /* updated per active tab */
+  --link-hover: oklch(0.88 0.18 105); /* chartreuse highlighter — not in any tab palette */
+
+  --r-card:    10px;
+  --r-tab:     8px;
+
+  --pad-x:     clamp(20px, 4vw, 56px);
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 16px/1.55 "Manrope", system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  text-wrap: pretty;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 4vw, 56px) var(--pad-x) clamp(20px, 3vw, 40px);
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.22 0.008 250) 0%, transparent 70%),
+    var(--bg);
+}
+
+/* ── layout ───────────────────────────────────────────────── */
+/* one centered column owns the alignment: header AND cabinet share
+   the same max-width and center line, so the panel's left edge sits
+   directly below the header's center. tabs hang outside the column
+   on the left as a visual flourish — content stays anchored. */
+.layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(48px, 7vw, 96px);
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: clamp(32px, 7vw, 96px);
+}
+
+/* ── identity ─────────────────────────────────────────────── */
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.name {
+  font-family: inherit;
+  font-weight: 800;
+  letter-spacing: -0.038em;
+  color: var(--fg);
+  width: 100%;
+  display: block;
+  line-height: 0;
+}
+.name-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.name-svg text {
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 100px;
+  letter-spacing: -0.038em;
+}
+
+.name-anim {
+  width: 100%;
+  display: block;
+}
+
+@keyframes name-caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0.15; }
+}
+.name-caret {
+  animation: name-caret-blink 1.06s steps(2, end) infinite;
+}
+
+.tagline {
+  color: var(--fg-3);
+  font-size: 19px;
+  letter-spacing: 0.005em;
+  margin-top: 2px;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 0;
+  margin-top: 10px;
+  font-size: 18px;
+  color: var(--fg-2);
+}
+
+.link {
+  position: relative;
+  padding: 2px 6px;
+  isolation: isolate;
+  color: inherit;
+  font-weight: 700;
+  transition: color .25s cubic-bezier(.3,.7,.4,1);
+}
+.link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: 2px;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .28s cubic-bezier(.3,.7,.4,1), background .25s ease;
+}
+.link:hover::before {
+  transform: scaleX(1);
+}
+.link:hover {
+  color: oklch(0.18 0.008 250);
+}
+.link-sep {
+  color: var(--fg-3);
+  padding: 0 12px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── cabinet ──────────────────────────────────────────────── */
+/* browser-tab metaphor: tabs row sits on top of the panel, active
+   tab connects to the panel body. each tab still carries its own
+   accent via a thin colored top strip. */
+.cabinet {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* tabs row — 5 equal-width tabs spanning the panel edge-to-edge.
+   margin-bottom: -1px lets the active tab's bottom border (matched to
+   panel bg) cover the panel's top border so it merges with the panel. */
+.tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: 0;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.tab {
+  --c: var(--accent);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  padding: 0 10px;
+  background: var(--bg-2);
+  color: var(--fg-3);
+  border: 1px solid var(--hair);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  text-align: center;
+  cursor: pointer;
+  /* each tab gets exactly 1/5 of the row */
+  flex: 1 1 0;
+  min-width: 0;
+  /* overlap adjacent borders so they collapse to one hairline */
+  margin-right: -1px;
+  overflow: visible;
+  transition:
+    background .18s ease,
+    color .18s ease,
+    border-color .18s ease,
+    transform .18s cubic-bezier(.3,.7,.4,1);
+}
+.tab:last-child  { margin-right: 0; }
+
+/* thin accent strip pinned to the top edge of every tab — the only
+   way a tab's color reads when it's inactive. */
+.tab::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  height: 2px;
+  background: color-mix(in oklab, var(--c) 35%, transparent);
+  transition: background .18s ease, height .18s ease;
+}
+
+.tab:hover:not(.is-active) {
+  background: var(--bg-card);
+  color: color-mix(in oklab, var(--c) 80%, var(--fg));
+  transform: translateY(-5px);
+  z-index: 10;
+  box-shadow:
+    0 10px 24px -6px rgba(0, 0, 0, .6),
+    0 4px 12px -2px color-mix(in oklab, var(--c) 22%, transparent);
+}
+
+/* the top accent bar (::before) extends into a full border (::after)
+   on hover. animation runs in two beats: first the top edge widens to
+   span the full tab top, then the sides + bottom unfold downward to
+   wrap the whole tab. */
+.tab::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 2px solid var(--c);
+  border-radius: 0;
+  pointer-events: none;
+  clip-path: inset(0 50% 95% 50%);
+  opacity: 0;
+  filter:
+    drop-shadow(0 0 4px color-mix(in oklab, var(--c) 75%, transparent))
+    drop-shadow(0 0 10px color-mix(in oklab, var(--c) 40%, transparent));
+  transition:
+    clip-path .2s ease-out,
+    opacity .12s ease;
+}
+.tab:hover:not(.is-active)::after {
+  animation: wrap-trace .34s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+.tab.is-active::after { opacity: 0; clip-path: inset(0 50% 95% 50%); }
+
+@keyframes wrap-trace {
+  0%   { clip-path: inset(0 50% 95% 50%);  opacity: 0; }
+  15%  { opacity: 1; }
+  40%  { clip-path: inset(0 0 95% 0);     opacity: 1; }
+  100% { clip-path: inset(0);              opacity: 1; }
+}
+
+/* typewriter keypress — added briefly on click via JS so the animation
+   plays in full (down on press, up on release) even if the click is
+   momentary. removed when the keyframes finish. */
+.tab.is-pressing { animation: key-press .22s cubic-bezier(.3, .7, .4, 1); }
+@keyframes key-press {
+  0%   { transform: translateY(-5px) scale(1); }
+  35%  { transform: translateY(3px) scale(.97); }
+  70%  { transform: translateY(-6px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.tab:active:not(.is-active) {
+  transition-duration: .05s;
+}
+
+.tab.is-active {
+  background: var(--bg-panel);
+  color: var(--fg);
+  border-color: var(--hair);
+  border-bottom-color: var(--bg-panel); /* dissolve into panel */
+  z-index: 3;
+  font-weight: 800;
+}
+.tab.is-active::before {
+  background: var(--c);
+  height: 3px;
+}
+
+.tab-label { white-space: nowrap; }
+
+/* ── panel ────────────────────────────────────────────────── */
+.panel {
+  position: relative;
+  background: var(--bg-panel);
+  border: 1px solid var(--hair);
+  border-radius: 0 0 12px 12px;
+  padding: 36px clamp(28px, 4vw, 56px) 40px;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / .03) inset,
+    0 30px 80px -40px rgba(0, 0, 0, .6);
+}
+
+/* center panel content horizontally; content height drives panel height */
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: fade-up .28s cubic-bezier(.3,.7,.4,1) both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── current prose ────────────────────────────────────────── */
+.prose {
+  max-width: 56ch;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--fg-2);
+  letter-spacing: 0.002em;
+  text-wrap: pretty;
+}
+
+.prose p { color: var(--fg-2); }
+
+.ilink {
+  color: var(--fg);
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  padding-bottom: 1px;
+  transition: border-color .15s ease, color .15s ease;
+}
+.ilink:hover {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+.kicker {
+  --c: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px auto 0;
+  padding: 9px 16px 9px 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  color: var(--fg);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--hair));
+  border-radius: 999px;
+  align-self: center;
+  width: fit-content;
+  animation: kicker-pulse 3.4s ease-in-out infinite;
+}
+.kicker .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
+  animation: dot-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes kicker-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 color-mix(in oklab, var(--accent) 0%, transparent),
+      0 0 18px -4px color-mix(in oklab, var(--accent) 25%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px color-mix(in oklab, var(--accent) 8%, transparent),
+      0 0 32px -2px color-mix(in oklab, var(--accent) 55%, transparent);
+  }
+}
+@keyframes dot-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent),
+                0 0 8px 0 color-mix(in oklab, var(--accent) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--accent) 30%, transparent),
+                0 0 14px 2px color-mix(in oklab, var(--accent) 70%, transparent);
+  }
+}
+
+/* ── cards (experience / projects / events) ───────────────── */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 56ch;
+}
+
+.card {
+  padding: 22px 0 24px;
+  border-top: 1px solid var(--hair-2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.card:first-child { border-top: 0; padding-top: 4px; }
+.card:last-child  { padding-bottom: 4px; }
+
+.card-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 17.5px;
+}
+
+.card-title {
+  color: var(--fg);
+  font-weight: 600;
+  letter-spacing: -0.003em;
+}
+
+.card-sep {
+  color: var(--fg-3);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  align-self: center;
+  user-select: none;
+}
+
+.card-org {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.card-meta {
+  margin-left: auto;
+  color: var(--fg-3);
+  font-size: 14px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.01em;
+}
+
+.card-body {
+  color: var(--fg-2);
+  font-size: 16.5px;
+  line-height: 1.6;
+  max-width: 56ch;
+}
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.card-link {
+  color: var(--fg-2);
+  font-size: 14.5px;
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 50%, transparent);
+  padding-bottom: 1px;
+  transition: color .15s ease, border-color .15s ease;
+  align-self: flex-start;
+}
+.card-link:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12.5px;
+  padding: 4px 10px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  color: var(--fg-3);
+  letter-spacing: 0.01em;
+}
+
+/* ── tech ──────────────────────────────────────────────────── */
+.tech {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+  max-width: 56ch;
+}
+.tech-group {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--hair-2);
+  align-items: baseline;
+}
+.tech-group:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.tech-label {
+  color: var(--accent);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+.tech-items {
+  font-size: 17px;
+  color: var(--fg-2);
+  line-height: 1.8;
+  letter-spacing: 0.002em;
+}
+.tech-item { color: var(--fg); }
+.tech-dot {
+  color: var(--fg-3);
+  padding: 0 10px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 0;
+  vertical-align: -0.18em;
+  user-select: none;
+}
+
+/* ── foot ─────────────────────────────────────────────────── */
+.foot {
+  max-width: 1320px;
+  width: 100%;
+  margin: 80px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--fg-2);
+}
+.foot-sep {
+  padding: 0 12px;
+  color: var(--fg-3);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── responsive ───────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .layout {
+    padding-top: clamp(24px, 5vw, 56px);
+    gap: 48px;
+  }
+  .name { font-size: clamp(52px, 12vw, 100px); }
+  .tab { padding: 0 16px; height: 38px; }
+  .panel { padding: 32px clamp(22px, 4vw, 40px) 34px; }
+}
+
+@media (max-width: 480px) {
+  .layout { padding-top: 16px; gap: 40px; }
+  .name { font-size: clamp(44px, 16vw, 72px); }
+  .links { font-size: 14px; }
+  .link-sep { padding: 0 8px; }
+  .panel { padding: 26px 20px 28px; }
+  .tab { padding: 0 14px; font-size: 13px; }
+}
+
+/* ── selection ────────────────────────────────────────────── */
+::selection {
+  background: color-mix(in oklab, var(--accent) 50%, transparent);
+  color: var(--fg);
+}

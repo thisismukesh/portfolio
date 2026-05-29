@@ -1,0 +1,6 @@
+{
+  "// localhost links open in your default OS browser, not VS Code's Simple Browser": "",
+  "workbench.externalUriOpeners": {
+    "localhost": "default"
+  }
+}
