@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Bad request", { status: 400 });
     }
 
-    revalidateTag("portfolio");
+    updateTag("portfolio");
     return NextResponse.json({ revalidated: true, type: body._type });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";

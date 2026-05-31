@@ -1,6 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  /* dark base — deep cool charcoal, never pure black */
+  --color-bg: oklch(0.165 0.008 250);
+  --color-bg-2: oklch(0.205 0.008 250);
+  --color-bg-panel: oklch(0.215 0.008 250);
+  --color-bg-card: oklch(0.235 0.008 250);
+
+  /* off-white, slightly warm */
+  --color-fg: oklch(0.945 0.005 90);
+  --color-fg-2: oklch(0.78 0.008 90);
+  --color-fg-3: oklch(0.58 0.008 90);
+  --color-fg-4: oklch(0.42 0.008 90);
+
+  --color-hair: oklch(0.32 0.008 250);
+  --color-hair-2: oklch(0.27 0.008 250);
+
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --container-block: 720px;
+
+  --ease-spring: cubic-bezier(0.3, 0.7, 0.4, 1);
+
+  --animate-fade-up: fade-up 0.28s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
 
 @layer base {
   :root {
@@ -21,8 +56,8 @@
   body {
     background:
       radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.22 0.008 250) 0%, transparent 70%),
-      theme("colors.bg");
-    color: theme("colors.fg");
+      var(--color-bg);
+    color: var(--color-fg);
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -31,7 +66,7 @@
 
   ::selection {
     background: color-mix(in oklab, var(--accent) 50%, transparent);
-    color: theme("colors.fg");
+    color: var(--color-fg);
   }
 }
 
@@ -43,7 +78,7 @@
     isolation: isolate;
     padding: 2px 6px;
     font-weight: 700;
-    color: theme("colors.fg-2");
+    color: var(--color-fg-2);
     transition: color 0.25s cubic-bezier(0.3, 0.7, 0.4, 1);
   }
   .nav-link::before {
@@ -66,7 +101,7 @@
 
   /* big dot separators used in nav, card heads, footer, tech rows */
   .sep {
-    color: theme("colors.fg-3");
+    color: var(--color-fg-3);
     font-size: 28px;
     font-weight: 700;
     line-height: 1;
@@ -75,7 +110,7 @@
 
   /* inline prose links */
   .ilink {
-    color: theme("colors.fg");
+    color: var(--color-fg);
     border-bottom: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
     padding-bottom: 1px;
     transition: border-color 0.15s ease, color 0.15s ease;
@@ -93,9 +128,9 @@
     padding: 9px 16px 9px 14px;
     font-size: 14.5px;
     font-weight: 700;
-    color: theme("colors.fg");
+    color: var(--color-fg);
     background: color-mix(in oklab, var(--accent) 10%, transparent);
-    border: 1px solid color-mix(in oklab, var(--accent) 32%, theme("colors.hair"));
+    border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--color-hair));
     border-radius: 999px;
     animation: kicker-pulse 3.4s ease-in-out infinite;
   }
@@ -120,9 +155,9 @@
     padding: 0 10px;
     font-size: 15px;
     font-weight: 700;
-    color: theme("colors.fg-3");
-    background: theme("colors.bg-2");
-    border: 1px solid theme("colors.hair");
+    color: var(--color-fg-3);
+    background: var(--color-bg-2);
+    border: 1px solid var(--color-hair);
     cursor: pointer;
     transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease,
       transform 0.18s cubic-bezier(0.3, 0.7, 0.4, 1);
@@ -153,8 +188,8 @@
     transition: clip-path 0.2s ease-out, opacity 0.12s ease;
   }
   .tab:hover:not(.is-active) {
-    background: theme("colors.bg-card");
-    color: color-mix(in oklab, var(--c) 80%, theme("colors.fg"));
+    background: var(--color-bg-card);
+    color: color-mix(in oklab, var(--c) 80%, var(--color-fg));
     transform: translateY(-5px);
     z-index: 10;
     box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.6),
@@ -167,9 +202,9 @@
     animation: key-press 0.22s cubic-bezier(0.3, 0.7, 0.4, 1);
   }
   .tab.is-active {
-    background: theme("colors.bg-panel");
-    color: theme("colors.fg");
-    border-bottom-color: theme("colors.bg-panel");
+    background: var(--color-bg-panel);
+    color: var(--color-fg);
+    border-bottom-color: var(--color-bg-panel);
     z-index: 3;
     font-weight: 800;
   }

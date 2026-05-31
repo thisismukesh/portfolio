@@ -65,12 +65,11 @@ export function NameAnimated({ name }: { name: string }) {
     };
   }, [N]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // wave loop
+  // wave loop — when prefers-reduced-motion is on we skip the loop entirely
+  // and render the static name directly (see the render branch below), so
+  // there's no cells reset needed here.
   useEffect(() => {
-    if (reduce) {
-      setCells(chars.map((g) => ({ glyph: g, wave: false })));
-      return;
-    }
+    if (reduce) return;
     let cancelled = false;
     let raf = 0;
     let timer: ReturnType<typeof setTimeout> = 0 as unknown as ReturnType<typeof setTimeout>;
@@ -130,6 +129,12 @@ export function NameAnimated({ name }: { name: string }) {
   const [vx, , vw] = viewBox.split(" ").map(Number);
   const centerX = vx + vw / 2;
 
+  // When prefers-reduced-motion is on, render static glyphs instead of whatever
+  // wave-state cells last held (the wave loop is also skipped above).
+  const renderedCells = reduce
+    ? chars.map((g) => ({ glyph: g, wave: false }))
+    : cells;
+
   return (
     <h1 aria-label={name} className="block w-full leading-[0] text-fg">
       <span className="sr-only">{name}</span>
@@ -150,7 +155,7 @@ export function NameAnimated({ name }: { name: string }) {
           {name}
         </text>
         {centers ? (
-          cells.map((c, i) => (
+          renderedCells.map((c, i) => (
             <text
               key={i}
               x={centers[i]}
