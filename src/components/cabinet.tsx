@@ -40,7 +40,7 @@ export function Cabinet({
     >
       <section className="flex w-full flex-col items-center gap-[18px] text-center">
         {name}
-        <p className="mt-0.5 text-[19px] tracking-[0.005em] text-fg-3">
+        <p className="mt-0.5 text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
           {tagline}
         </p>
         <nav
