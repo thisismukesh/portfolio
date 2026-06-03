@@ -82,7 +82,7 @@ export function Cabinet({
           })}
         </div>
 
-        <div className="relative z-[1] flex w-full flex-col rounded-b-[12px] border border-hair bg-bg-panel px-[clamp(22px,4vw,56px)] pb-10 pt-9 shadow-[0_1px_0_oklch(1_0_0/.03)_inset,0_30px_80px_-40px_rgba(0,0,0,.6)]">
+        <div className="relative z-[1] flex w-full flex-col rounded-b-[12px] border border-hair bg-bg-panel px-[clamp(22px,4vw,56px)] py-10 shadow-[0_1px_0_oklch(1_0_0/.03)_inset,0_30px_80px_-40px_rgba(0,0,0,.6)]">
           <AnimatePresence mode="wait">
             <motion.div
               key={active}
