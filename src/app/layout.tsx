@@ -21,8 +21,8 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://mukeshsaravanan.de
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getPortfolioContent();
-  const title = `${settings.name} — portfolio`;
-  const description = `${settings.name}. ${settings.tagline}`;
+  const title = "Hey, I'm Mukesh!";
+  const description = settings.tagline;
   return {
     metadataBase: new URL(SITE_URL),
     title,
