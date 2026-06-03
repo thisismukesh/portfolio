@@ -80,22 +80,15 @@ export function ProjectsPanel({ data }: { data: Project[] }) {
       {data.map((p, i) => (
         <li key={i} className={cardClass(i, data.length)}>
           <div className="flex flex-wrap items-baseline gap-[10px] text-[17.5px]">
-            <span className="font-semibold tracking-[-0.003em] text-fg">{p.name}</span>
+            <span className="font-semibold tracking-[-0.003em] text-[var(--accent)]">{p.name}</span>
           </div>
           <p className="max-w-[56ch] text-[16.5px] leading-[1.6] text-fg-2">{p.blurb}</p>
-          <div className="mt-1 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-[6px]">
-              {p.tags.map((t) => (
-                <span key={t} className="rounded-full border border-hair px-[10px] py-1 font-mono text-[12.5px] tracking-[0.01em] text-fg-3">
-                  {t}
-                </span>
-              ))}
-            </div>
-            {p.link && (
-              <a className="self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={p.link.href} {...externalLinkProps(p.link.href)}>
-                {p.link.label}
-              </a>
-            )}
+          <div className="mt-1 flex flex-wrap gap-[6px]">
+            {p.tags.map((t) => (
+              <span key={t} className="rounded-full border border-hair px-[10px] py-1 font-mono text-[12.5px] tracking-[0.01em] text-fg-3">
+                {t}
+              </span>
+            ))}
           </div>
         </li>
       ))}
@@ -134,15 +127,10 @@ export function EventsPanel({ data }: { data: EventItem[] }) {
       {data.map((e, i) => (
         <li key={i} className={cardClass(i, data.length)}>
           <div className="flex flex-wrap items-baseline gap-[10px] text-[17.5px]">
-            <span className="font-semibold tracking-[-0.003em] text-fg">{e.name}</span>
+            <span className="font-semibold tracking-[-0.003em] text-[var(--accent)]">{e.name}</span>
             <span className="ml-auto font-mono text-[14px] tracking-[0.01em] text-fg-3">{e.date}</span>
           </div>
           <p className="max-w-[56ch] text-[16.5px] leading-[1.6] text-fg-2">{e.blurb}</p>
-          {e.link && (
-            <a className="self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={e.link.href} {...externalLinkProps(e.link.href)}>
-              {e.link.label}
-            </a>
-          )}
         </li>
       ))}
     </CardList>
