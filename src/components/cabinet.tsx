@@ -58,7 +58,8 @@ export function Cabinet({
         </nav>
       </section>
 
-      <section className="flex w-full flex-col" aria-label="sections">
+      {/* Desktop: browser-tab cabinet. Hidden below md. */}
+      <section className="hidden w-full flex-col md:flex" aria-label="sections">
         <div className="relative z-[2] -mb-px flex w-full items-end" role="tablist">
           {TABS.map((tab) => {
             const isActive = tab.id === active;
@@ -96,6 +97,62 @@ export function Cabinet({
             </motion.div>
           </AnimatePresence>
         </div>
+      </section>
+
+      {/* Mobile: vertical accordion. Only this is shown below md. */}
+      <section className="flex w-full flex-col gap-2 md:hidden" aria-label="sections">
+        {TABS.map((tab) => {
+          const isOpen = tab.id === active;
+          return (
+            <div
+              key={tab.id}
+              className="overflow-hidden rounded-[10px] border border-hair bg-bg-panel"
+              style={{ ["--c" as string]: ACCENTS[tab.id] }}
+            >
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={`acc-${tab.id}`}
+                onClick={() => setActive(tab.id)}
+                className="flex w-full items-center gap-3 px-4 py-3.5 text-left text-[16px] font-bold transition-colors"
+                style={{
+                  color: isOpen ? "var(--c)" : "var(--color-fg-2)",
+                  borderLeft: "3px solid var(--c)",
+                }}
+              >
+                <span className="flex-1">{tab.label}</span>
+                <span
+                  aria-hidden
+                  className="text-[18px] leading-none transition-transform duration-200"
+                  style={{
+                    transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
+                    color: isOpen ? "var(--c)" : "var(--color-fg-3)",
+                  }}
+                >
+                  +
+                </span>
+              </button>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    id={`acc-${tab.id}`}
+                    role="region"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28, ease: [0.3, 0.7, 0.4, 1] }}
+                    className="overflow-hidden"
+                    style={{ ["--accent" as string]: ACCENTS[tab.id] }}
+                  >
+                    <div className="flex w-full flex-col items-center px-5 pb-6 pt-2">
+                      {panels[tab.id]}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
       </section>
     </main>
   );

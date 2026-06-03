@@ -102,12 +102,12 @@ export function TechPanel({ data }: { data: TechGroup[] }) {
       {data.map((g, gi) => (
         <div
           key={g.label}
-          className={`grid grid-cols-[160px_1fr] items-baseline gap-6 pb-[22px] ${gi === data.length - 1 ? "" : "border-b border-hair-2"}`}
+          className={`flex flex-col gap-2 pb-[22px] md:grid md:grid-cols-[160px_1fr] md:items-baseline md:gap-6 ${gi === data.length - 1 ? "" : "border-b border-hair-2"}`}
         >
           <div className="text-[17px] font-bold tracking-[-0.005em] text-[var(--accent)]">{g.label}</div>
-          <div className="text-[17px] leading-[1.8] tracking-[0.002em] text-fg-2">
+          <div className="flex flex-wrap items-baseline text-[17px] leading-[1.8] tracking-[0.002em] text-fg-2">
             {g.items.map((item, idx) => (
-              <span key={item}>
+              <span key={item} className="flex items-baseline">
                 <span className="text-fg">{item}</span>
                 {idx < g.items.length - 1 && (
                   <span className="sep px-[10px] align-[-0.18em] text-[28px] leading-[0]">·</span>
