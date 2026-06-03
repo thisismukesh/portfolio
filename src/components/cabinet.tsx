@@ -35,7 +35,7 @@ export function Cabinet({
 
   return (
     <main
-      className="mx-auto flex w-full max-w-block flex-1 flex-col items-center gap-[clamp(48px,7vw,96px)] pt-[clamp(32px,7vw,96px)]"
+      className="mx-auto flex w-full max-w-block flex-1 flex-col items-center gap-[clamp(40px,5vw,72px)] pt-[clamp(16px,3vw,40px)]"
       style={{ ["--accent" as string]: accent }}
     >
       <section className="flex w-full flex-col items-center gap-[18px] text-center">

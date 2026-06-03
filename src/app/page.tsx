@@ -46,7 +46,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="flex min-h-screen flex-col px-[clamp(20px,4vw,56px)] pb-[clamp(20px,3vw,40px)] pt-[clamp(24px,4vw,56px)]">
+      <div className="flex min-h-screen flex-col px-[clamp(20px,4vw,56px)] pb-[clamp(20px,3vw,40px)] pt-[clamp(12px,2vw,24px)]">
         <Cabinet
           name={<NameAnimated name={settings.name} />}
           tagline={settings.tagline}
