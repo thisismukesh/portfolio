@@ -41,22 +41,20 @@ export function Cabinet({
     >
       <section className="flex w-full flex-col items-center gap-[18px]">
         {name}
-        {/* Identity row: photo + tagline + nav.
-            - Desktop (md+): photo on the left (1 tab wide = 20% of the block),
-              tagline + nav stacked vertically beside it, left-aligned.
-            - Mobile: photo on top centered (40% so it has weight), tagline +
-              nav below centered like before. Side-by-side is too cramped at
-              ~390px once the tagline + nav take their natural width. */}
-        <div className="flex w-full flex-col items-center gap-[18px] md:flex-row md:gap-5">
+        {/* Identity row: photo + tagline + nav, sized to its content and
+            centered horizontally under the name. Photo is a fixed 144px square
+            on desktop (one tab width), tagline + nav stack to its right
+            centered. Mobile: photo on top, text below, whole group centered. */}
+        <div className="flex flex-col items-center gap-[18px] md:flex-row md:gap-5">
           <Image
             src="/me.jpg"
             alt="Mukesh"
             width={300}
             height={300}
             priority
-            className="aspect-square w-[40%] shrink-0 object-cover md:w-[20%]"
+            className="aspect-square w-[40%] shrink-0 object-cover md:w-[144px]"
           />
-          <div className="flex min-w-0 flex-1 flex-col gap-2.5 text-center md:text-left">
+          <div className="flex flex-col items-center gap-2.5 text-center md:items-start md:text-left">
             <p className="text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
               {tagline}
             </p>
