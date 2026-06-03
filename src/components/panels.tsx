@@ -6,14 +6,18 @@ import type {
   TechGroup,
   EventItem,
 } from "@/lib/types";
+import { externalLinkProps } from "@/lib/external";
 
 const ptComponents: PortableTextComponents = {
   marks: {
-    link: ({ value, children }) => (
-      <a className="ilink" href={value?.href ?? "#"}>
-        {children}
-      </a>
-    ),
+    link: ({ value, children }) => {
+      const href = value?.href ?? "#";
+      return (
+        <a className="ilink" href={href} {...externalLinkProps(href)}>
+          {children}
+        </a>
+      );
+    },
   },
   block: {
     normal: ({ children }) => <p className="text-fg-2">{children}</p>,
@@ -60,7 +64,7 @@ export function ExperiencePanel({ data }: { data: Experience[] }) {
           </div>
           <p className="max-w-[56ch] text-[16.5px] leading-[1.6] text-fg-2">{e.blurb}</p>
           {e.link && (
-            <a className="card-link self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={e.link.href}>
+            <a className="card-link self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={e.link.href} {...externalLinkProps(e.link.href)}>
               {e.link.label} →
             </a>
           )}
@@ -88,7 +92,7 @@ export function ProjectsPanel({ data }: { data: Project[] }) {
               ))}
             </div>
             {p.link && (
-              <a className="self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={p.link.href}>
+              <a className="self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={p.link.href} {...externalLinkProps(p.link.href)}>
                 {p.link.label}
               </a>
             )}
@@ -135,7 +139,7 @@ export function EventsPanel({ data }: { data: EventItem[] }) {
           </div>
           <p className="max-w-[56ch] text-[16.5px] leading-[1.6] text-fg-2">{e.blurb}</p>
           {e.link && (
-            <a className="self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={e.link.href}>
+            <a className="self-start border-b border-[color-mix(in_oklab,var(--accent)_50%,transparent)] pb-px text-[14.5px] text-fg-2 transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]" href={e.link.href} {...externalLinkProps(e.link.href)}>
               {e.link.label}
             </a>
           )}

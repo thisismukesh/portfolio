@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ACCENTS, TABS } from "@/lib/palette";
 import type { TabId } from "@/lib/types";
+import { externalLinkProps } from "@/lib/external";
 
 type NavLink = { label: string; href: string };
 
@@ -49,7 +50,7 @@ export function Cabinet({
           {links.map((l, i) => (
             <span key={l.href} className="inline-flex items-center">
               {i > 0 && <span className="sep px-3">·</span>}
-              <a href={l.href} className="nav-link">
+              <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
                 {l.label}
               </a>
             </span>
