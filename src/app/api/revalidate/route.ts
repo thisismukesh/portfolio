@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Bad request", { status: 400 });
     }
 
-    revalidateTag("portfolio");
+    revalidateTag("portfolio", "default");
     return NextResponse.json({ revalidated: true, type: body._type });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
