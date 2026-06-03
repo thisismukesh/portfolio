@@ -97,11 +97,14 @@ export function NameAnimated({ name }: { name: string }) {
               lastTick = now;
               scrambleSnap = chars.map((ch) => (ch === " " ? " " : randSym()));
             }
-            const head = -BAND + t * (N + BAND * 2);
+            // Sweep head from fully off-screen-left (head = -BAND*2) to fully
+            // off-screen-right (head = N + BAND), so the band never "pops in"
+            // mid-character at the start/end of the pass.
+            const head = -BAND * 2 + t * (N + BAND * 3);
             setCells(
               chars.map((ch, i) => {
                 const d = i - head;
-                if (Math.abs(d) <= BAND) {
+                if (Math.abs(d) < BAND) {
                   return { glyph: ch === " " ? " " : scrambleSnap[i], wave: true };
                 }
                 return { glyph: ch, wave: false };

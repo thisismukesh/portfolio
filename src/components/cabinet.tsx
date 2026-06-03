@@ -59,9 +59,7 @@ export function Cabinet({
               {tagline}
             </p>
             <nav
-              // -ml-1.5 (6px) on desktop offsets the first nav-link's left padding
-              // so its text aligns flush with the tagline above. Mobile stays centered.
-              className="flex flex-wrap items-center justify-center text-[18px] text-fg-2 md:-ml-1.5 md:justify-start"
+              className="flex flex-wrap items-center justify-center text-[18px] text-fg-2"
               aria-label="elsewhere"
             >
               {links.map((l, i) => (
