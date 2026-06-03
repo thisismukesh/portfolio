@@ -54,23 +54,29 @@ export function Cabinet({
             priority
             className="aspect-square w-[40%] shrink-0 object-cover md:w-[144px]"
           />
+          {/* Text column: blurb is the natural width-setter; nav centers under
+              it via text-align (inline-flex shrinks to content and obeys text-
+              center on the parent). On desktop the column is left-aligned in
+              the row, but nav is centered within its OWN content box. */}
           <div className="flex flex-col items-center gap-2.5 text-center md:items-start md:text-left">
             <p className="text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
               {tagline}
             </p>
-            <nav
-              className="flex flex-wrap items-center justify-center text-[18px] text-fg-2"
-              aria-label="elsewhere"
-            >
-              {links.map((l, i) => (
-                <span key={l.href} className="inline-flex items-center">
-                  {i > 0 && <span className="sep px-3">·</span>}
-                  <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
-                    {l.label}
-                  </a>
-                </span>
-              ))}
-            </nav>
+            <div className="w-full text-center">
+              <nav
+                className="inline-flex flex-wrap items-center justify-center text-[18px] text-fg-2"
+                aria-label="elsewhere"
+              >
+                {links.map((l, i) => (
+                  <span key={l.href} className="inline-flex items-center">
+                    {i > 0 && <span className="sep px-3">·</span>}
+                    <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
+                      {l.label}
+                    </a>
+                  </span>
+                ))}
+              </nav>
+            </div>
           </div>
         </div>
       </section>

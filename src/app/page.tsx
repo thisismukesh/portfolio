@@ -56,7 +56,7 @@ export default async function Home() {
 
         <footer className="mx-auto mt-20 flex w-full items-center justify-center font-mono text-[14px] tracking-[0.04em] text-fg-2">
           <span>
-            Built by {settings.name} © <FooterYear initialYear={new Date().getFullYear()} />
+            © <FooterYear initialYear={new Date().getFullYear()} />, built by yours truly, {settings.name}
           </span>
         </footer>
       </div>
