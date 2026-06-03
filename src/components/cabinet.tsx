@@ -38,24 +38,39 @@ export function Cabinet({
       className="mx-auto flex w-full max-w-block flex-1 flex-col items-center gap-[clamp(40px,5vw,72px)] pt-[clamp(16px,3vw,40px)]"
       style={{ ["--accent" as string]: accent }}
     >
-      <section className="flex w-full flex-col items-center gap-[18px] text-center">
+      <section className="flex w-full flex-col items-center gap-[18px]">
         {name}
-        <p className="mt-0.5 text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
-          {tagline}
-        </p>
-        <nav
-          className="mt-2.5 flex flex-wrap items-center justify-center text-[18px] text-fg-2"
-          aria-label="elsewhere"
-        >
-          {links.map((l, i) => (
-            <span key={l.href} className="inline-flex items-center">
-              {i > 0 && <span className="sep px-3">·</span>}
-              <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
-                {l.label}
-              </a>
-            </span>
-          ))}
-        </nav>
+        {/* Identity row: photo + tagline + nav.
+            - Desktop (md+): photo on the left (1 tab wide = 20% of the block),
+              tagline + nav stacked vertically beside it, left-aligned.
+            - Mobile: photo on top centered (40% so it has weight), tagline +
+              nav below centered like before. Side-by-side is too cramped at
+              ~390px once the tagline + nav take their natural width. */}
+        <div className="flex w-full flex-col items-center gap-[18px] md:flex-row md:gap-5">
+          <div
+            aria-hidden
+            className="aspect-square w-[40%] shrink-0 bg-bg-2 md:w-[20%]"
+            // TODO: replace with <Image src="/me.jpg" /> once a photo is added.
+          />
+          <div className="flex min-w-0 flex-1 flex-col gap-2.5 text-center md:text-left">
+            <p className="text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
+              {tagline}
+            </p>
+            <nav
+              className="flex flex-wrap items-center justify-center text-[18px] text-fg-2 md:justify-start"
+              aria-label="elsewhere"
+            >
+              {links.map((l, i) => (
+                <span key={l.href} className="inline-flex items-center">
+                  {i > 0 && <span className="sep px-3">·</span>}
+                  <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
+                    {l.label}
+                  </a>
+                </span>
+              ))}
+            </nav>
+          </div>
+        </div>
       </section>
 
       {/* Desktop: browser-tab cabinet. Hidden below md. */}
