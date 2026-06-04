@@ -17,13 +17,11 @@ export function Cabinet({
   tagline,
   links,
   panels,
-  beforeTabs,
 }: {
   name: ReactNode;
   tagline: string;
   links: NavLink[];
   panels: Record<TabId, ReactNode>;
-  beforeTabs?: ReactNode;
 }) {
   const [active, setActive] = useState<TabId>("current");
   const accent = ACCENTS[active];
@@ -59,8 +57,6 @@ export function Cabinet({
           ))}
         </nav>
       </section>
-
-      {beforeTabs}
 
       {/* Desktop: browser-tab cabinet. Hidden below md. */}
       <section className="hidden w-full flex-col md:flex" aria-label="sections">
