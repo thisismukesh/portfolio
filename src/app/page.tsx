@@ -2,6 +2,7 @@ import { getPortfolioContent } from "@/sanity/queries";
 import { NameAnimated } from "@/components/name-animated";
 import { Cabinet } from "@/components/cabinet";
 import { FooterYear } from "@/components/footer-year";
+import { PhotoStrip } from "@/components/photo-strip";
 import {
   CurrentPanel,
   ExperiencePanel,
@@ -11,7 +12,11 @@ import {
 } from "@/components/panels";
 import type { TabId } from "@/lib/types";
 
-export const revalidate = 60;
+// Hourly background revalidation. CMS edits hit immediately via the signed
+// webhook (`revalidateTag("portfolio")`); Spotify "song of the day" is
+// deterministic per UTC day, so we only need to re-fetch it a few times
+// a day at most.
+export const revalidate = 3600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://mukeshsaravanan.dev";
 
@@ -52,6 +57,7 @@ export default async function Home() {
           tagline={settings.tagline}
           links={settings.links}
           panels={panels}
+          beforeTabs={<PhotoStrip />}
         />
 
         <footer className="mx-auto mt-20 flex w-full items-center justify-center font-mono text-[14px] tracking-[0.04em] text-fg-2">

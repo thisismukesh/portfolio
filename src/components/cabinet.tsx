@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ACCENTS, TABS } from "@/lib/palette";
 import type { TabId } from "@/lib/types";
@@ -18,11 +17,13 @@ export function Cabinet({
   tagline,
   links,
   panels,
+  beforeTabs,
 }: {
   name: ReactNode;
   tagline: string;
   links: NavLink[];
   panels: Record<TabId, ReactNode>;
+  beforeTabs?: ReactNode;
 }) {
   const [active, setActive] = useState<TabId>("current");
   const accent = ACCENTS[active];
@@ -41,45 +42,25 @@ export function Cabinet({
     >
       <section className="flex w-full flex-col items-center gap-[18px]">
         {name}
-        {/* Identity row: photo + tagline + nav, sized to its content and
-            centered horizontally under the name. Photo is a fixed 144px square
-            on desktop (one tab width), tagline + nav stack to its right
-            centered. Mobile: photo on top, text below, whole group centered. */}
-        <div className="flex flex-col items-center gap-[18px] md:flex-row md:gap-5">
-          <Image
-            src="/me.jpg"
-            alt="Mukesh"
-            width={300}
-            height={300}
-            priority
-            className="aspect-square w-[40%] shrink-0 object-cover md:w-[144px]"
-          />
-          {/* Text column: blurb is the natural width-setter; nav centers under
-              it via text-align (inline-flex shrinks to content and obeys text-
-              center on the parent). On desktop the column is left-aligned in
-              the row, but nav is centered within its OWN content box. */}
-          <div className="flex flex-col items-center gap-2.5 text-center md:items-start md:text-left">
-            <p className="text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
-              {tagline}
-            </p>
-            <div className="w-full text-center">
-              <nav
-                className="inline-flex flex-wrap items-center justify-center text-[18px] text-fg-2"
-                aria-label="elsewhere"
-              >
-                {links.map((l, i) => (
-                  <span key={l.href} className="inline-flex items-center">
-                    {i > 0 && <span className="sep px-3">·</span>}
-                    <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
-                      {l.label}
-                    </a>
-                  </span>
-                ))}
-              </nav>
-            </div>
-          </div>
-        </div>
+        <p className="text-center text-[20px] font-semibold tracking-[0.005em] text-[var(--accent)] transition-colors duration-200">
+          {tagline}
+        </p>
+        <nav
+          className="flex flex-wrap items-center justify-center text-[18px] text-fg-2"
+          aria-label="elsewhere"
+        >
+          {links.map((l, i) => (
+            <span key={l.href} className="inline-flex items-center">
+              {i > 0 && <span className="sep px-3">·</span>}
+              <a href={l.href} className="nav-link" {...externalLinkProps(l.href)}>
+                {l.label}
+              </a>
+            </span>
+          ))}
+        </nav>
       </section>
+
+      {beforeTabs}
 
       {/* Desktop: browser-tab cabinet. Hidden below md. */}
       <section className="hidden w-full flex-col md:flex" aria-label="sections">

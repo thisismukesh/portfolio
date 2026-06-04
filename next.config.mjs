@@ -9,7 +9,7 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://cdn.sanity.io",
+  "img-src 'self' data: blob: https://cdn.sanity.io https://i.scdn.co",
   "font-src 'self' data:",
   "connect-src 'self' https://1h4duye7.api.sanity.io https://1h4duye7.apicdn.sanity.io",
   "frame-ancestors 'none'",
@@ -68,7 +68,11 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "cdn.sanity.io" },
+      // Spotify album art for the "song of the day" tile.
+      { protocol: "https", hostname: "i.scdn.co" },
+    ],
   },
   async headers() {
     return [
