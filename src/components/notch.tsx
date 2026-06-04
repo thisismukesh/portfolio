@@ -47,6 +47,30 @@ export function Notch({ song: initialSong }: Props) {
   // `rolling` plays the song-changeover transition: current song slides up
   // and out, then the next song slides in from below.
   const [rolling, setRolling] = useState(false);
+  // Touch devices have no hover — we use click to toggle there. Sniff once
+  // on mount so SSR/hydration is stable.
+  const [isTouch, setIsTouch] = useState(false);
+  const notchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none), (pointer: coarse)");
+    setIsTouch(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsTouch(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // On touch devices, clicking anywhere outside the notch should close it.
+  useEffect(() => {
+    if (!isTouch || !open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (notchRef.current && !notchRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [isTouch, open]);
 
   // Schedule a one-shot fetch at the next UTC midnight (+buffer) to swap
   // in the new daily song. After it fires, schedule another for the
@@ -87,8 +111,15 @@ export function Notch({ song: initialSong }: Props) {
     };
   }, []);
 
+  // Single source of truth for open/close: hover on pointer devices,
+  // click on touch devices. The body component takes these as callbacks.
+  const handleHoverStart = isTouch ? undefined : () => setOpen(true);
+  const handleHoverEnd = isTouch ? undefined : () => setOpen(false);
+  const handleClick = isTouch ? () => setOpen((v) => !v) : undefined;
+
   return (
     <div
+      ref={notchRef}
       // Fixed, centered, z-above everything. pointer-events-none on the
       // wrapper so the empty edges don't catch clicks; the notch itself
       // re-enables pointer events.
@@ -99,8 +130,10 @@ export function Notch({ song: initialSong }: Props) {
         song={song}
         open={open}
         rolling={rolling}
-        onHoverStart={() => setOpen(true)}
-        onHoverEnd={() => setOpen(false)}
+        isTouch={isTouch}
+        onHoverStart={handleHoverStart}
+        onHoverEnd={handleHoverEnd}
+        onClick={handleClick}
       />
     </div>
   );
@@ -110,29 +143,43 @@ function NotchBody({
   song,
   open,
   rolling,
+  isTouch,
   onHoverStart,
   onHoverEnd,
+  onClick,
 }: {
   song: LikedSong | null;
   open: boolean;
   rolling: boolean;
-  onHoverStart: () => void;
-  onHoverEnd: () => void;
+  isTouch: boolean;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
+  onClick?: () => void;
 }) {
+  // Mobile notches are smaller — narrower phone screens and a smaller
+  // visual budget. Desktop sizes stay generous.
+  const collapsedW = isTouch ? 170 : 220;
+  const collapsedH = isTouch ? 24 : 28;
+  const openW = isTouch ? 300 : 360;
+  const openH = open ? (song ? (isTouch ? 100 : 116) : isTouch ? 32 : 36) : collapsedH;
+
   return (
     <motion.div
-      // pointer-events restored so the notch is hoverable. Container is the
+      // pointer-events restored so the notch is interactive. Container is the
       // black pill itself: bottom corners rounded, top corners flush with
       // the viewport edge (notch is "carved" out of the bezel).
-      className="pointer-events-auto relative overflow-hidden bg-black shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+      className="pointer-events-auto relative cursor-pointer overflow-hidden bg-black shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
       style={{ borderBottomLeftRadius: 18, borderBottomRightRadius: 18 }}
       onHoverStart={onHoverStart}
       onHoverEnd={onHoverEnd}
       onFocus={onHoverStart}
       onBlur={onHoverEnd}
+      onClick={onClick}
+      role={isTouch ? "button" : undefined}
+      aria-expanded={isTouch ? open : undefined}
       animate={{
-        width: open ? 360 : 220,
-        height: open ? (song ? 116 : 36) : 28,
+        width: open ? openW : collapsedW,
+        height: openH,
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
