@@ -208,16 +208,25 @@ function CollapsedMarquee({
   const [trackWidth, setTrackWidth] = useState(0);
 
   // Measure the text and the visible track so we can compute marquee
-  // distance/duration based on actual rendered sizes (and re-measure on
-  // resize and on song changes).
+  // distance/duration based on actual rendered sizes. We use ResizeObserver
+  // so the marquee starts as soon as either dimension becomes non-zero —
+  // important on mobile where the parent's spring animation can keep the
+  // track's measured width at 0 for the first few frames after mount, and
+  // a one-shot measure would lock in that 0 forever (gating the marquee).
   useEffect(() => {
     const measure = () => {
       if (measureRef.current) setTextWidth(measureRef.current.offsetWidth);
       if (trackRef.current) setTrackWidth(trackRef.current.offsetWidth);
     };
     measure();
+    const ro = new ResizeObserver(measure);
+    if (trackRef.current) ro.observe(trackRef.current);
+    if (measureRef.current) ro.observe(measureRef.current);
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, [text]);
 
   // Marquee duration: keep speed consistent regardless of text length.

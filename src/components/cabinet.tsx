@@ -39,21 +39,24 @@ export function Cabinet({
 
   // Mobile-only: scroll the tapped row to the top of the viewport so its
   // newly-expanded content reads top-to-bottom. The offset clears the
-  // fixed notch (28-32px tall depending on state). We use a small extra
-  // gap so the row's top edge isn't kissing the notch.
+  // fixed notch.
+  //
+  // Why the delay: when switching tabs the previous panel collapses (280ms
+  // motion exit) and the new panel expands at the same time. Until those
+  // animations complete the row's measured top is wherever it was BEFORE
+  // the collapse, which leads to scrolling past the row. We wait slightly
+  // longer than the motion duration before measuring so the layout has
+  // settled.
   const scrollMobileRowIntoView = (id: TabId) => {
-    const row = mobileRowRefs.current[id];
-    if (!row) return;
     const NOTCH_CLEARANCE = 40;
-    // requestAnimationFrame so the new active state has rendered before we
-    // measure — the row hasn't shifted yet, but its target position is the
-    // same regardless of which other panel is open since headers stack in
-    // a fixed order.
-    requestAnimationFrame(() => {
+    const MOTION_SETTLE_MS = 320; // > 280ms motion duration in the accordion
+    setTimeout(() => {
+      const row = mobileRowRefs.current[id];
+      if (!row) return;
       const rect = row.getBoundingClientRect();
       const target = window.scrollY + rect.top - NOTCH_CLEARANCE;
       window.scrollTo({ top: target, behavior: "smooth" });
-    });
+    }, MOTION_SETTLE_MS);
   };
 
   return (
