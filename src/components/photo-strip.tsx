@@ -11,17 +11,21 @@ const PHOTO = { src: "/me.jpg", alt: "Mukesh", caption: "me" };
 export async function PhotoStrip() {
   return (
     <section
-      className="mx-auto grid w-full max-w-block grid-cols-3 items-stretch gap-[clamp(8px,1.5vw,20px)]"
+      className="mx-auto grid w-full max-w-block grid-cols-[1fr_3fr] items-stretch gap-[clamp(8px,1.5vw,20px)]"
       aria-label="photo and now playing"
     >
-      {/* Photo (1/3): the square sets the row height. */}
-      <figure className="flex flex-col gap-2.5">
+      {/* Photo (1/4 width): square. With the column narrower, the photo gets
+          smaller, but the row height is set by the larger player tile via
+          its explicit aspect ratio — so this square no longer drives height.
+          aspect-square keeps the photo proportional inside its column;
+          object-cover handles the crop. */}
+      <figure className="flex flex-col justify-end gap-2.5">
         <div className="relative aspect-square overflow-hidden rounded-[10px] border border-hair bg-bg-panel">
           <Image
             src={PHOTO.src}
             alt={PHOTO.alt}
             fill
-            sizes="(min-width: 768px) 33vw, 33vw"
+            sizes="(min-width: 768px) 25vw, 25vw"
             className="object-cover"
           />
         </div>
@@ -29,10 +33,11 @@ export async function PhotoStrip() {
           {PHOTO.caption}
         </figcaption>
       </figure>
-      {/* Mini-player spans the remaining two columns. h-full + flex makes its
-          tile fill the same height as the photo's square, so both captions
-          land on the same baseline. */}
-      <div className="col-span-2 flex h-full flex-col">
+      {/* Mini-player (3/4 width): wider AND taller than the photo. We set its
+          height via aspect-ratio on the tile container — roughly 3:1 — so the
+          row stretches to that height, and the photo (smaller square)
+          centers itself vertically inside the row via the figure's flex. */}
+      <div className="flex flex-col">
         <LikedSongTile />
       </div>
     </section>
