@@ -27,8 +27,8 @@ export async function LikedSongTile() {
 
   if (!song) {
     return (
-      <figure className="flex flex-col gap-2.5">
-        <div className="flex aspect-square flex-col overflow-hidden rounded-[10px] border border-hair bg-bg-panel">
+      <figure className="flex h-full flex-col gap-2.5">
+        <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-hair bg-bg-panel">
           <div className="flex flex-1 items-center justify-center px-4">
             <span className="font-mono text-[11px] tracking-[0.04em] text-fg-3">
               not listening
@@ -50,7 +50,7 @@ export async function LikedSongTile() {
       <a
         href={song.url}
         {...externalLinkProps(song.url)}
-        className="group flex aspect-square flex-col overflow-hidden rounded-[10px] border border-hair bg-bg-panel transition-colors hover:border-[var(--accent)]"
+        className="group flex flex-1 flex-col overflow-hidden rounded-[10px] border border-hair bg-bg-panel transition-colors hover:border-[var(--accent)]"
         aria-label={`Listen to ${song.title} by ${song.artist} on Spotify`}
       >
         {/* Top zone: album art + track info, horizontal Spotify-mini-player
