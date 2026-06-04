@@ -2,10 +2,25 @@ import Image from "next/image";
 import { getDailyLikedSong } from "@/lib/spotify";
 import { externalLinkProps } from "@/lib/external";
 
-// Third tile: a deterministic-per-day pick from my Spotify Liked Songs. Same
-// for every visitor on a given UTC day; rotates at UTC midnight as the daily
-// hash changes. If Spotify env vars aren't set or the API errors, falls back
-// to a static empty-state.
+// Third tile: a deterministic-per-day pick from my Spotify Liked Songs,
+// presented as a mini-player UI — album art on the left, track info on the
+// right, "Spotify" branding at the bottom. Rotates at UTC midnight.
+
+// Spotify wordmark, embedded as inline SVG so it ships with no extra request.
+// Pulled from Spotify's design assets — the official green is #1DB954.
+function SpotifyMark() {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[10.5px] font-semibold tracking-[0.04em] text-[#1DB954]">
+      <svg viewBox="0 0 168 168" className="h-3 w-3" aria-hidden>
+        <path
+          fill="currentColor"
+          d="M83.996.277C37.747.277.253 37.77.253 84.019c0 46.251 37.494 83.741 83.743 83.741 46.254 0 83.744-37.49 83.744-83.741 0-46.246-37.49-83.738-83.745-83.738zm38.404 120.78a5.217 5.217 0 01-7.18 1.73c-19.662-12.01-44.414-14.73-73.564-8.07a5.222 5.222 0 01-6.249-3.93 5.213 5.213 0 013.926-6.25c31.9-7.291 59.263-4.15 81.337 9.34 2.46 1.51 3.24 4.72 1.73 7.18zm10.25-22.805c-1.89 3.07-5.91 4.04-8.98 2.15-22.51-13.84-56.823-17.846-83.448-9.764-3.453 1.043-7.1-.903-8.148-4.35-1.04-3.453.907-7.093 4.354-8.143 30.413-9.228 68.222-4.758 94.072 11.127 3.07 1.89 4.04 5.91 2.15 8.98zm.88-23.744c-26.99-16.031-71.52-17.505-97.289-9.684-4.138 1.255-8.514-1.081-9.768-5.219a7.835 7.835 0 015.221-9.771c29.581-8.98 78.756-7.245 109.83 11.202a7.823 7.823 0 012.74 10.733c-2.2 3.722-7.02 4.949-10.73 2.739z"
+        />
+      </svg>
+      Spotify
+    </span>
+  );
+}
 
 export async function LikedSongTile() {
   const song = await getDailyLikedSong();
@@ -13,13 +28,18 @@ export async function LikedSongTile() {
   if (!song) {
     return (
       <figure className="flex flex-col gap-2.5">
-        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[10px] border border-hair bg-bg-panel">
-          <span className="font-mono text-[12px] tracking-[0.04em] text-fg-3">
-            song of the day
-          </span>
+        <div className="flex aspect-square flex-col overflow-hidden rounded-[10px] border border-hair bg-bg-panel">
+          <div className="flex flex-1 items-center justify-center px-4">
+            <span className="font-mono text-[11px] tracking-[0.04em] text-fg-3">
+              not listening
+            </span>
+          </div>
+          <div className="border-t border-hair-2 px-3 py-2">
+            <SpotifyMark />
+          </div>
         </div>
         <figcaption className="text-center font-mono text-[12.5px] tracking-[0.02em] text-fg-3">
-          ♫
+          song of the day
         </figcaption>
       </figure>
     );
@@ -30,27 +50,39 @@ export async function LikedSongTile() {
       <a
         href={song.url}
         {...externalLinkProps(song.url)}
-        className="group relative block aspect-square overflow-hidden rounded-[10px] border border-hair bg-bg-panel"
+        className="group flex aspect-square flex-col overflow-hidden rounded-[10px] border border-hair bg-bg-panel transition-colors hover:border-[var(--accent)]"
         aria-label={`Listen to ${song.title} by ${song.artist} on Spotify`}
       >
-        {song.albumArt && (
-          <Image
-            src={song.albumArt}
-            alt={`${song.album} cover art`}
-            fill
-            sizes="(min-width: 768px) 33vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-        )}
-        {/* Bottom gradient overlay so the track title stays readable on any
-            album art. Kept subtle — the art is the hero. */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-0.5 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 pt-10">
-          <div className="truncate text-[13.5px] font-semibold text-white">
-            {song.title}
+        {/* Top zone: album art + track info, horizontal Spotify-mini-player
+            layout. Art is a square on the left; title/artist fill the rest. */}
+        <div className="flex flex-1 items-stretch gap-3 p-3">
+          <div className="relative aspect-square h-full shrink-0 overflow-hidden rounded-[4px] bg-black">
+            {song.albumArt && (
+              <Image
+                src={song.albumArt}
+                alt={`${song.album} cover art`}
+                fill
+                sizes="(min-width: 768px) 16vw, 16vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              />
+            )}
           </div>
-          <div className="truncate font-mono text-[11.5px] tracking-[0.01em] text-white/70">
-            {song.artist}
+          <div className="flex min-w-0 flex-1 flex-col justify-center">
+            <div className="truncate text-[13.5px] font-semibold leading-tight text-fg">
+              {song.title}
+            </div>
+            <div className="mt-1 truncate font-mono text-[11.5px] leading-tight tracking-[0.01em] text-fg-2">
+              {song.artist}
+            </div>
+            <div className="mt-1 truncate font-mono text-[10.5px] leading-tight tracking-[0.01em] text-fg-3">
+              {song.album}
+            </div>
           </div>
+        </div>
+        {/* Bottom zone: Spotify wordmark, separated by a hairline. Reads like
+            the source/footer of a mini-player. */}
+        <div className="border-t border-hair-2 px-3 py-2">
+          <SpotifyMark />
         </div>
       </a>
       <figcaption className="text-center font-mono text-[12.5px] tracking-[0.02em] text-fg-3">
