@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ACCENTS, TABS } from "@/lib/palette";
 import type { TabId } from "@/lib/types";
@@ -25,12 +25,35 @@ export function Cabinet({
 }) {
   const [active, setActive] = useState<TabId>("current");
   const accent = ACCENTS[active];
+  // Refs to each mobile-accordion row so we can scroll the tapped tab's
+  // header to just below the fixed notch — the panel always opens
+  // downward into clean viewport space, not above the user's scroll.
+  const mobileRowRefs = useRef<Partial<Record<TabId, HTMLDivElement | null>>>({});
 
   const onClick = (id: TabId, el: HTMLButtonElement) => {
     el.classList.remove("is-pressing");
     void el.offsetWidth;
     el.classList.add("is-pressing");
     setActive(id);
+  };
+
+  // Mobile-only: scroll the tapped row to the top of the viewport so its
+  // newly-expanded content reads top-to-bottom. The offset clears the
+  // fixed notch (28-32px tall depending on state). We use a small extra
+  // gap so the row's top edge isn't kissing the notch.
+  const scrollMobileRowIntoView = (id: TabId) => {
+    const row = mobileRowRefs.current[id];
+    if (!row) return;
+    const NOTCH_CLEARANCE = 40;
+    // requestAnimationFrame so the new active state has rendered before we
+    // measure — the row hasn't shifted yet, but its target position is the
+    // same regardless of which other panel is open since headers stack in
+    // a fixed order.
+    requestAnimationFrame(() => {
+      const rect = row.getBoundingClientRect();
+      const target = window.scrollY + rect.top - NOTCH_CLEARANCE;
+      window.scrollTo({ top: target, behavior: "smooth" });
+    });
   };
 
   return (
@@ -106,6 +129,9 @@ export function Cabinet({
           return (
             <div
               key={tab.id}
+              ref={(el) => {
+                mobileRowRefs.current[tab.id] = el;
+              }}
               className="overflow-hidden rounded-[10px] border border-hair bg-bg-panel"
               style={{ ["--c" as string]: ACCENTS[tab.id] }}
             >
@@ -113,7 +139,13 @@ export function Cabinet({
                 type="button"
                 aria-expanded={isOpen}
                 aria-controls={`acc-${tab.id}`}
-                onClick={() => setActive(tab.id)}
+                onClick={() => {
+                  // Tapping the already-open tab is a no-op — skip the scroll
+                  // so we don't yank the user back to the top.
+                  if (tab.id === active) return;
+                  setActive(tab.id);
+                  scrollMobileRowIntoView(tab.id);
+                }}
                 className="flex w-full items-center gap-3 px-4 py-3.5 text-left text-[16px] font-bold transition-colors"
                 style={{
                   color: isOpen ? "var(--c)" : "var(--color-fg-2)",
