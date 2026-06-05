@@ -202,40 +202,6 @@ function CollapsedMarquee({
   rolling: boolean;
 }) {
   const text = song ? `${song.title} — ${song.artist}` : "♫";
-  const trackRef = useRef<HTMLDivElement>(null);
-  const measureRef = useRef<HTMLSpanElement>(null);
-  const [textWidth, setTextWidth] = useState(0);
-  const [trackWidth, setTrackWidth] = useState(0);
-
-  // Measure the text and the visible track so we can compute marquee
-  // distance/duration based on actual rendered sizes. We use ResizeObserver
-  // so the marquee starts as soon as either dimension becomes non-zero —
-  // important on mobile where the parent's spring animation can keep the
-  // track's measured width at 0 for the first few frames after mount, and
-  // a one-shot measure would lock in that 0 forever (gating the marquee).
-  useEffect(() => {
-    const measure = () => {
-      if (measureRef.current) setTextWidth(measureRef.current.offsetWidth);
-      if (trackRef.current) setTrackWidth(trackRef.current.offsetWidth);
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (trackRef.current) ro.observe(trackRef.current);
-    if (measureRef.current) ro.observe(measureRef.current);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [text]);
-
-  // Marquee duration: keep speed consistent regardless of text length.
-  // We move the text by (textWidth + trackWidth) pixels — text starts off
-  // the right edge and ends fully off the left edge — so duration scales
-  // linearly with that distance.
-  const SPEED_PX_PER_SEC = 50;
-  const distance = textWidth + trackWidth;
-  const duration = distance > 0 ? distance / SPEED_PX_PER_SEC : 8;
 
   return (
     <motion.div
@@ -249,34 +215,25 @@ function CollapsedMarquee({
       transition={{ duration: 0.35, ease: [0.3, 0.7, 0.4, 1] }}
       className="absolute inset-0 flex items-center"
     >
-      <div
-        ref={trackRef}
-        className="relative h-full w-full overflow-hidden"
-      >
-        {/* Hidden ruler used to measure the text's natural width */}
-        <span
-          ref={measureRef}
-          className="invisible absolute whitespace-nowrap font-mono text-[11px] tracking-[0.04em]"
-          aria-hidden
+      <div className="relative h-full w-full overflow-hidden">
+        {/* Two-copy CSS marquee. The strip is exactly 2× the text+gutter
+            width; sliding by -50% lands the duplicate where the first copy
+            started, so the loop is seamless. Pure CSS keyframes — runs from
+            first paint, no JS measurement / race with parent layout.
+            The translateY(-50%) is baked into the keyframes so Tailwind's
+            transform utilities don't conflict with the animated transform. */}
+        <div
+          className="absolute top-1/2 flex w-max items-center whitespace-nowrap font-mono text-[11px] tracking-[0.04em] text-white/85"
+          style={{
+            animation: "notch-marquee 14s linear infinite",
+            willChange: "transform",
+          }}
         >
-          {text}
-        </span>
-        {/* Visible marquee: animated text track */}
-        {trackWidth > 0 && (
-          <motion.div
-            className="absolute top-1/2 flex -translate-y-1/2 items-center whitespace-nowrap font-mono text-[11px] tracking-[0.04em] text-white/85"
-            initial={{ x: trackWidth }}
-            animate={{ x: -textWidth }}
-            transition={{
-              duration,
-              ease: "linear",
-              repeat: Infinity,
-              repeatType: "loop",
-            }}
-          >
+          <span className="pr-12">{text}</span>
+          <span className="pr-12" aria-hidden>
             {text}
-          </motion.div>
-        )}
+          </span>
+        </div>
         {/* Subtle fade gradients at each edge so text glides in and out */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-black to-transparent" />

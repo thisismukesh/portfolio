@@ -275,6 +275,20 @@
   }
 }
 
+/* Notch marquee: slide a two-copy text strip leftward by exactly half its
+   own width — at the loop point the second copy lands where the first
+   started, so the reset is invisible. transform: translate3d so the
+   browser composits on the GPU and the animation runs even while other
+   parts of the page (notch spring, page scroll) are also animating. */
+@keyframes notch-marquee {
+  from {
+    transform: translate3d(0, -50%, 0);
+  }
+  to {
+    transform: translate3d(-50%, -50%, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .kicker,
   .kicker .dot {
