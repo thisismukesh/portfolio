@@ -91,18 +91,6 @@ const project = defineType({
   preview: { select: { title: "name", subtitle: "blurb" } },
 });
 
-const techGroup = defineType({
-  name: "techGroup",
-  title: "Tech group",
-  type: "document",
-  fields: [
-    orderField,
-    defineField({ name: "label", title: "Category label", type: "string", validation: (r) => r.required() }),
-    defineField({ name: "items", title: "Items", type: "array", of: [{ type: "string" }], options: { layout: "tags" } }),
-  ],
-  preview: { select: { title: "label" } },
-});
-
 const event = defineType({
   name: "event",
   title: "Event",
@@ -122,6 +110,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   currentDoc,
   experience,
   project,
-  techGroup,
   event,
 ];

@@ -8,7 +8,6 @@ import {
   CurrentPanel,
   ExperiencePanel,
   ProjectsPanel,
-  TechPanel,
   EventsPanel,
 } from "@/components/panels";
 import type { TabId } from "@/lib/types";
@@ -22,7 +21,7 @@ export const revalidate = 3600;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://mukeshsaravanan.dev";
 
 export default async function Home() {
-  const [{ settings, current, experience, projects, tech, events }, song] =
+  const [{ settings, current, experience, projects, events }, song] =
     await Promise.all([getPortfolioContent(), getDailyLikedSong()]);
 
   // All panels are rendered on the server and handed to the Tabs island, so the
@@ -31,7 +30,6 @@ export default async function Home() {
     current: <CurrentPanel data={current} />,
     experience: <ExperiencePanel data={experience} />,
     projects: <ProjectsPanel data={projects} />,
-    tech: <TechPanel data={tech} />,
     events: <EventsPanel data={events} />,
   };
 
@@ -42,7 +40,6 @@ export default async function Home() {
     description: settings.tagline,
     url: SITE_URL,
     sameAs: settings.links.map((l) => l.href),
-    knowsAbout: tech.flatMap((g) => g.items),
   };
 
   return (

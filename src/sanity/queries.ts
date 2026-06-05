@@ -11,7 +11,6 @@ const QUERY = groq`{
   "current": *[_type == "current"][0]{ body, availability, showAvailability },
   "experience": *[_type == "experience"] | order(order asc, _createdAt asc){ role, org, dates, blurb, ${linkProjection} },
   "projects": *[_type == "project"] | order(order asc, _createdAt asc){ name, blurb, tags, ${linkProjection} },
-  "tech": *[_type == "techGroup"] | order(order asc, _createdAt asc){ label, items },
   "events": *[_type == "event"] | order(order asc, _createdAt asc){ name, date, blurb, ${linkProjection} }
 }`;
 
@@ -33,7 +32,6 @@ export async function getPortfolioContent(): Promise<PortfolioContent> {
       current: data.current ?? FALLBACK_CONTENT.current,
       experience: data.experience?.length ? data.experience : FALLBACK_CONTENT.experience,
       projects: data.projects?.length ? data.projects : FALLBACK_CONTENT.projects,
-      tech: data.tech?.length ? data.tech : FALLBACK_CONTENT.tech,
       events: data.events?.length ? data.events : FALLBACK_CONTENT.events,
     };
   } catch {

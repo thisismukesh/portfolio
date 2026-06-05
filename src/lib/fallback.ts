@@ -70,14 +70,6 @@ export const FALLBACK_CONTENT: PortfolioContent = {
     { name: "morning pages", blurb: "an rss reader that only updates once a day, at 7am. trying to slow myself down.", tags: ["rust", "htmx", "sqlite"], link: { label: "morningpages.app →", href: "#" } },
     { name: "field notes", blurb: "monthly essays on engineering culture, mostly written on the train. ~1.2k subscribers.", tags: ["writing"], link: { label: "read →", href: "#" } },
   ],
-  tech: [
-    { label: "languages", items: ["typescript", "rust", "python", "go", "swift"] },
-    { label: "frontend", items: ["react", "svelte", "tailwind", "framer motion"] },
-    { label: "backend", items: ["node", "postgres", "redis", "sqlite"] },
-    { label: "ops & infra", items: ["docker", "fly.io", "vercel", "cloudflare"] },
-    { label: "design", items: ["figma", "framer", "rive"] },
-    { label: "reaching for next", items: ["zig", "sveltekit", "duckdb"] },
-  ],
   events: [
     { name: "react summit — amsterdam", date: "jun 2025", blurb: "talk: “the case for boring frontends.” recording up soon.", link: { label: "details →", href: "#" } },
     { name: "local first conf", date: "may 2025", blurb: "attendee. lots of good corridor conversations about crdts.", link: null },

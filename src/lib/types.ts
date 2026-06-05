@@ -2,7 +2,7 @@ import type { PortableTextBlock } from "@portabletext/react";
 
 export type Link = { label: string; href: string } | null;
 
-export type TabId = "current" | "experience" | "projects" | "tech" | "events";
+export type TabId = "current" | "experience" | "projects" | "events";
 
 export type SiteSettings = {
   name: string;
@@ -31,11 +31,6 @@ export type Project = {
   link: Link;
 };
 
-export type TechGroup = {
-  label: string;
-  items: string[];
-};
-
 export type EventItem = {
   name: string;
   date: string;
@@ -48,6 +43,5 @@ export type PortfolioContent = {
   current: Current;
   experience: Experience[];
   projects: Project[];
-  tech: TechGroup[];
   events: EventItem[];
 };
